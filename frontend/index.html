@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SkillMe – Career Co-Pilot</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700;800&family=DM+Sans:wght@400;500;700&display=swap">
+<style>
+:root{--bg:#f3f6fc;--card:#fff;--ink:#12183a;--mut:#6b7392;--line:#e4e9f5;--side:#0e1330;--acc:#4f7cff;--sun:#ff9f45;--ok:#22b07d;--bad:#ee5d7a;--r:18px;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;margin:0}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;overflow-x:hidden}
+h1,h2,h3,.logo{font-family:'Sora',system-ui,sans-serif}
+button{font:inherit;cursor:pointer;border:0}
+.view{display:none}.view.on{display:block}
+:focus-visible{outline:2px solid var(--sun);outline-offset:2px}
+#land{background:linear-gradient(135deg,#e4edff,#f6fff9 60%,#fff4e6);min-height:100vh;position:relative}
+#gl{position:fixed;inset:0;width:100%;height:100%;z-index:0}
+.nav{position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center;padding:22px 5vw}
+.logo{font-weight:800;font-size:22px;display:flex;gap:10px;align-items:center}
+.logo i{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,var(--sun),var(--acc));display:inline-block;transform:rotate(12deg)}
+.btn{padding:12px 22px;border-radius:999px;font-weight:700;background:var(--sun);color:#1a1200;transition:transform .2s}
+.btn:hover{transform:translateY(-2px)}
+.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.hero{position:relative;z-index:2;min-height:74vh;display:flex;flex-direction:column;justify-content:center;padding:0 5vw;max-width:900px}
+.hero h1{font-size:clamp(40px,7.5vw,90px);line-height:1;font-weight:800;letter-spacing:-.03em}
+.hero h1 span{background:linear-gradient(90deg,#f08a24,#ee5d7a 55%,var(--acc));-webkit-background-clip:text;background-clip:text;color:transparent;display:inline-block;animation:sh 6s linear infinite;background-size:200%}
+@keyframes sh{to{background-position:200% 0}}
+.hero p{margin:22px 0 30px;font-size:19px;max-width:560px;color:var(--mut);line-height:1.5}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.feats{position:relative;z-index:2;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;padding:30px 5vw 80px}
+.feat{background:#ffffffcc;border:1px solid var(--line);backdrop-filter:blur(8px);border-radius:var(--r);padding:24px;transition:transform .25s,border-color .25s}
+.feat:hover{transform:perspective(600px) rotateX(5deg) rotateY(-6deg) translateY(-6px);border-color:var(--sun)}
+.feat h3{font-size:18px;margin-bottom:8px}.feat p{color:var(--mut);font-size:15px;line-height:1.5}
+.wrap{min-height:100vh;display:none;place-items:center;background:radial-gradient(circle at 15% 10%,#dbe6ff,var(--bg) 55%);padding:20px}
+.wrap.on{display:grid}
+.lc{background:var(--card);border-radius:24px;padding:34px;width:min(520px,100%);box-shadow:0 20px 60px #4f7cff26;border:1px solid var(--line)}
+.lc h2{font-size:26px;margin:14px 0 6px}.lc p{color:var(--mut);margin-bottom:18px;line-height:1.5}
+label{display:block;font-size:13px;font-weight:700;margin:14px 0 6px}
+.f{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit}
+textarea.f{min-height:150px;resize:vertical}
+.full{width:100%;margin-top:18px;border-radius:12px}
+.lnk{background:none;color:var(--acc);font-weight:700;margin-top:12px;width:100%}
+.err{color:var(--bad);font-size:13px;min-height:18px;margin-top:8px}
+#app{display:none;min-height:100vh}#app.on{display:flex}
+aside{width:230px;background:var(--side);color:#cfd6f5;padding:22px 14px;display:flex;flex-direction:column;gap:6px;position:sticky;top:0;height:100vh;flex-shrink:0}
+aside .logo{color:#fff;margin:0 8px 22px}
+aside a{display:flex;gap:10px;align-items:center;padding:11px 12px;border-radius:12px;color:inherit;font-size:15px;cursor:pointer}
+aside a:hover{background:#ffffff14}aside a.on{background:#4f7cff38;color:#a9c0ff}
+main{flex:1;min-width:0;padding:22px 26px 100px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--card);border-radius:var(--r);padding:16px 22px;margin-bottom:20px;border:1px solid var(--line)}
+.top h2{font-size:22px}
+.av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--sun),var(--acc));display:grid;place-items:center;color:#fff;font-weight:700;flex-shrink:0}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px}
+.card{background:var(--card);border-radius:var(--r);padding:20px;border:1px solid var(--line)}
+.card h3{font-size:15px;color:var(--mut);font-weight:500;margin-bottom:10px}
+.big{font-family:'Sora';font-size:32px;font-weight:700}.big small{font-size:12px;color:var(--mut);font-weight:400}
+.two{display:grid;grid-template-columns:1.5fr 1fr;gap:16px;margin-bottom:16px}
+.goal{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px;border-radius:12px;background:var(--bg);margin-bottom:10px}
+.goal small{display:block;color:var(--mut);font-size:12px}.goal strong{color:var(--ok);font-size:14px;text-align:right}
+.job{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}.job:last-child{border:0}
+.lg{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-weight:800;color:#fff;flex-shrink:0;background:var(--acc)}
+.tag{display:inline-block;font-size:12px;padding:3px 10px;border-radius:99px;background:var(--bg);margin:6px 6px 0 0;color:var(--mut)}
+.tag.ok{background:#dff6ec;color:#12794f}.tag.mid{background:#fff0dc;color:#a35a00}.tag.no{background:#fde3e9;color:#b02a47}
+.gap{margin:12px 0}.gap div{display:flex;justify-content:space-between;gap:8px;font-size:14px;margin-bottom:5px}
+.pb{height:8px;border-radius:9px;background:var(--bg);overflow:hidden}.pb i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,var(--acc),var(--sun))}
+.cta{width:100%;padding:13px;border-radius:12px;background:var(--acc);color:#fff;font-weight:700;margin-top:12px}
+.sm{padding:9px 16px;border-radius:10px;background:var(--bg);color:var(--ink);font-weight:700;border:1px solid var(--line)}
+.plan{margin-top:12px;font-size:14px;line-height:1.6;display:none}.plan.on{display:block}.plan li{margin:0 0 8px 18px}
+.note{font-size:13px;color:var(--mut);line-height:1.5;margin-top:10px}
+.pf{display:flex;gap:16px;align-items:center;margin-bottom:16px}.pf .av{width:64px;height:64px;font-size:26px}
+.pf h2{font-size:24px}.pf p{color:var(--mut);font-size:14px}
+.sec{margin:18px 0 6px;font-weight:700;font-size:14px}
+.li{font-size:14px;padding:8px 12px;background:var(--bg);border-radius:10px;margin-bottom:6px;line-height:1.4}
+.chart{display:flex;gap:12px;align-items:flex-end;height:170px;margin:14px 0 4px}
+.chart div{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;justify-content:flex-end;height:100%;font-size:12px;color:var(--mut)}
+.chart span{width:100%;border-radius:8px;background:var(--acc);min-height:4px}
+.voice{display:flex;gap:10px}.voice .f{flex:1}
+.mic{width:48px;border-radius:12px;background:var(--sun);font-size:20px}.mic.rec{animation:pl 1s infinite;background:var(--bad)}
+@keyframes pl{50%{box-shadow:0 0 0 10px #ee5d7a33}}
+.log{margin-top:12px;font-size:14px}.log>div{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 12px;border-radius:12px;background:var(--bg);margin-bottom:8px}
+.log button{background:var(--ok);color:#fff;padding:6px 12px;border-radius:99px;font-size:12px;font-weight:700}
+.empty{color:var(--mut);font-size:14px;padding:10px 0;line-height:1.5}
+.ar{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;margin-top:8px}
+@media (max-width:980px){.grid{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}.ar{grid-template-columns:1fr 1fr}}
+@media (max-width:760px){#app{flex-direction:column}aside{position:fixed;top:auto;bottom:0;left:0;right:0;width:100%;height:auto;flex-direction:row;padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px));z-index:5;overflow-x:auto}aside .logo{display:none}aside a{white-space:nowrap;font-size:13px}main{padding:14px 14px 90px}.grid{grid-template-columns:1fr}.hero p{font-size:17px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<section id="land" class="view on">
+<canvas id="gl" aria-hidden="true"></canvas>
+<div class="nav"><div class="logo"><i></i>SkillMe</div><div class="row"><button class="btn ghost" onclick="go('login')">Log in</button><button class="btn" onclick="go('login')">Get started free</button></div></div>
+<div class="hero">
+<h1>Your career, <span>built from your resume.</span></h1>
+<p>Upload your resume and pick a target role. SkillMe reads what you have actually shown, finds the gaps, and builds a weekly plan around your hours.</p>
+<div class="row"><button class="btn" onclick="go('login')">Start your pivot</button><button class="btn ghost" onclick="demo()">Try demo mode</button></div>
+</div>
+<div class="feats">
+<div class="feat"><h3>Resume first</h3><p>Every score comes from your own resume text. Nothing is made up.</p></div>
+<div class="feat"><h3>Proof, not claims</h3><p>A skill in a project counts more than a skill in a list.</p></div>
+<div class="feat"><h3>Weekly plan</h3><p>Your biggest gaps, one per week, sized to your free hours.</p></div>
+<div class="feat"><h3>Speak updates</h3><p>Say “I applied to Infosys” and confirm. Your tracker updates.</p></div>
+</div>
+</section>
+
+<section id="login" class="wrap">
+<div class="lc" style="width:min(420px,100%)">
+<div class="logo"><i></i>SkillMe</div>
+<h2 id="lt">Welcome back</h2><p id="ls">Log in to see your career plan.</p>
+<div id="nm" style="display:none"><label for="n">Full name</label><input class="f" id="n" autocomplete="name"></div>
+<label for="e">Email</label><input class="f" id="e" type="email" autocomplete="email" placeholder="you@college.edu">
+<label for="p">Password</label><input class="f" id="p" type="password" autocomplete="current-password" placeholder="At least 6 characters">
+<div class="err" id="err" role="alert"></div>
+<button class="btn full" id="sb" onclick="auth()">Log in</button>
+<button class="lnk" onclick="tog()" id="tg">New here? Create an account</button>
+<button class="lnk" style="color:var(--mut)" onclick="demo()">Try demo mode with a sample resume</button>
+</div>
+</section>
+
+<section id="onb" class="wrap">
+<div class="lc">
+<div class="logo"><i></i>SkillMe</div>
+<h2>First, add your resume</h2>
+<p>Your analysis is built only from this text. Upload a PDF, DOCX or TXT, or paste it below, and check that it read correctly.</p>
+<input class="f" type="file" id="fl" accept=".pdf,.docx,.txt" aria-label="Upload resume">
+<button class="sm" type="button" style="margin-top:12px" onclick="randRes()">Use a random sample resume</button>
+<label for="rt">Resume text</label>
+<textarea class="f" id="rt" placeholder="Name, education, skills, projects, experience…"></textarea>
+<label for="rl">Target role</label><select class="f" id="rl"></select>
+<label for="hr">Hours you can study each week</label><input class="f" id="hr" type="number" min="1" max="60" value="6">
+<div class="err" id="oe" role="alert"></div>
+<button class="btn full" onclick="analyzeNow()">Analyze my resume</button>
+</div>
+</section>
+
+<section id="app" class="view">
+<aside>
+<div class="logo"><i></i>SkillMe</div>
+<a class="on" data-t="dash">▦ Dashboard</a><a data-t="profile">☺ Profile</a><a data-t="interview">🎯 Mock Interview</a><a data-t="apps">▥ Applications</a><a data-t="voice">🎙 Voice</a>
+</aside>
+<main>
+<div id="demob" class="top" style="display:none;background:#fff4e6;border-color:var(--sun)"><span><b>Demo mode.</b> This is a sample resume and nothing is saved.</span><button class="sm" onclick="exitDemo()">Exit demo</button></div>
+<div class="top"><h2 id="wb">Welcome back!</h2><div class="av" id="av">S</div></div>
+
+<div id="v-dash">
+<div class="grid" id="stats"></div>
+<div class="two">
+<div class="card"><h3 id="gt">Skill gaps</h3><div id="gl2"></div>
+<button class="cta" onclick="plan()">Create transition plan</button><ul class="plan" id="pl"></ul></div>
+<div class="card"><h3>Career goals</h3><div id="goals"></div></div>
+</div>
+<div class="card"><h3>Roles that fit your resume today</h3><div id="picks"></div>
+<p class="note">Salary ranges are indicative entry-level bands for India. Check current listings before relying on them.</p></div>
+</div>
+
+<div id="v-profile" style="display:none">
+<div class="card" id="pcard"></div>
+</div>
+
+<div id="v-interview" style="display:none">
+<div class="card">
+<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+<div><h2 style="font-size:20px">🎯 Mock Interview</h2><p class="note" style="margin:4px 0 0">Interactive technical interview tailored to your target role. Evaluated by Anthropic Claude (or keyword heuristic fallback).</p></div>
+<div id="iv-badge"><span class="tag">Checking AI status…</span></div>
+</div>
+<div style="margin-top:16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+<button class="btn" id="iv-btn-start" onclick="startInterview()">Start Mock Interview</button>
+<span class="note" id="iv-target-label">Target role: <b id="iv-role-name">Data Analyst</b></span>
+</div>
+</div>
+
+<div id="iv-session-card" class="card" style="margin-top:16px;display:none">
+<h3 style="color:var(--ink);font-size:16px;font-weight:700">Interview Questions</h3>
+<p class="note" style="margin-bottom:14px">Answer each question thoroughly (at least a couple sentences). Concrete examples, clear steps, and technical terms improve your score.</p>
+<div id="iv-questions"></div>
+<div class="err" id="iv-err" role="alert"></div>
+<button class="cta" id="iv-btn-submit" style="max-width:280px;margin-top:16px" onclick="submitInterview()">Submit Answers for Evaluation</button>
+</div>
+
+<div id="iv-result-card" class="card" style="margin-top:16px;display:none">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+<h3 style="color:var(--ink);font-size:16px;font-weight:700">Evaluation Report</h3>
+<span id="iv-method-tag" class="tag ok">Claude AI Rubric</span>
+</div>
+<div class="big" id="iv-overall-score">0.0 <small>/ 5.0 Overall</small></div>
+<div class="pb" style="margin:12px 0 16px"><i id="iv-score-bar" style="width:0%"></i></div>
+<div id="iv-dimensions" class="grid" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px"></div>
+<div id="iv-details"></div>
+<button class="sm" style="margin-top:16px" onclick="startInterview()">Retake Interview</button>
+</div>
+</div>
+
+<div id="v-apps" style="display:none">
+<div class="card"><h3>Add an application</h3>
+<div class="ar"><input class="f" id="ac" placeholder="Company"><input class="f" id="ar" placeholder="Role"><select class="f" id="as"></select><button class="sm" onclick="addApp()">Add</button></div></div>
+<div class="card" style="margin-top:16px"><h3>Add a real job description</h3><p class="note" style="margin:0 0 8px">Paste job listings for your target role. After 3 or more, skill priorities blend in what employers actually ask for.</p><select class="f" id="jf" aria-label="Role"></select><textarea class="f" id="jt" style="margin-top:8px" placeholder="Paste the job description…"></textarea><button class="sm" style="margin-top:10px" onclick="ingestJD()">Add job description</button><p class="note" id="jr"></p></div><div class="two" style="margin-top:16px"><div class="card"><h3>Pipeline</h3><div id="ch"></div><p class="note" id="rr"></p></div><div class="card"><h3>Your applications</h3><div id="al"></div></div></div>
+</div>
+
+<div id="v-voice" style="display:none">
+<div class="card"><h3>Speak a career update</h3>
+<div class="voice"><input class="f" id="vt" placeholder="e.g. I applied to Infosys as data analyst"><button class="mic" id="mic" title="Speak" aria-label="Speak">🎙</button></div>
+<p class="note">Say it or type it and press Enter. Nothing is saved until you confirm.</p>
+<div class="log" id="lg"></div></div>
+</div>
+</main>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
+<script>
+var $=function(i){return document.getElementById(i)},S={user:'',text:'',role:0,hrs:6,apps:[]},P=null,signup=false;
+var STG=['Applied','Response received','Interview','Offer','Rejected'];
+var SK={'Python':'python','SQL':'\\bsql\\b|mysql|postgres|sqlite','Excel':'excel|spreadsheet','Statistics':'statistic|probability','Pandas/NumPy':'pandas|numpy','Data Visualization':'tableau|power ?bi|matplotlib|seaborn|plotly|dashboard','Machine Learning':'machine learning|scikit|sklearn|\\bml\\b','Deep Learning':'tensorflow|pytorch|keras|deep learning|\\bcnn\\b|neural','NLP / LLMs':'\\bnlp\\b|\\bllm|langchain|transformer|\\brag\\b','JavaScript':'javascript|\\bjs\\b|node\\.?js','TypeScript':'typescript','React':'\\breact','HTML/CSS':'html|\\bcss|tailwind','REST APIs':'\\brest|\\bapi|fastapi|flask|express|django','Databases':'mongodb|mysql|postgres|firebase|database|\\bdbms','Git/GitHub':'\\bgit','Docker':'docker|kubernetes','Java':'\\bjava\\b','C/C++':'c\\+\\+','DSA':'data structures|\\bdsa\\b|leetcode|algorithm','Linux':'linux|ubuntu|\\bbash','Cloud':'\\baws\\b|azure|\\bgcp\\b|cloud','Cybersecurity':'security|owasp|penetration|cyber|kali|wireshark'};
+var R=[
+{n:'Data Analyst',sal:'₹4,00,000 – ₹8,00,000',up:'Senior Data Analyst · ₹12,00,000+',s:{'SQL':3,'Excel':3,'Python':3,'Statistics':2,'Pandas/NumPy':2,'Data Visualization':3}},
+{n:'Frontend Developer',sal:'₹4,00,000 – ₹9,00,000',up:'Senior Frontend Engineer · ₹15,00,000+',s:{'JavaScript':3,'HTML/CSS':3,'React':3,'TypeScript':2,'Git/GitHub':2,'REST APIs':2,'DSA':1}},
+{n:'ML Engineer',sal:'₹6,00,000 – ₹14,00,000',up:'Senior ML Engineer · ₹25,00,000+',s:{'Python':3,'Machine Learning':3,'Deep Learning':2,'Pandas/NumPy':2,'Statistics':2,'NLP / LLMs':1,'Git/GitHub':1,'Docker':1}},
+{n:'Backend Developer',sal:'₹4,50,000 – ₹10,00,000',up:'Senior Backend Engineer · ₹18,00,000+',s:{'REST APIs':3,'Databases':3,'Python':2,'Java':2,'DSA':2,'Git/GitHub':2,'Docker':1,'Cloud':1}},
+{n:'Cybersecurity Analyst',sal:'₹4,00,000 – ₹9,00,000',up:'Security Engineer · ₹16,00,000+',s:{'Cybersecurity':3,'Linux':3,'Python':2,'Cloud':1,'Databases':1}}];
+var SAMPLES=[
+{r:0,t:'Aarav Mehta\naarav.mehta@example.com | +91 98765 43210\nEducation\nB.Tech Computer Science, Pune Institute of Technology, CGPA 8.4\nSkills\nPython, SQL, Excel, Git\nProjects\nSales Dashboard: built an Excel and Power BI dashboard on retail data for a college fest\nMovie Ratings Analysis: used Python, pandas and matplotlib to study 20,000 ratings\nCampus Survey: cleaned survey data and reported basic statistics\nCertifications\nGoogle Data Analytics Certificate'},
+{r:1,t:'Isha Verma\nisha.verma@example.com | +91 91234 56789\nEducation\nB.E. Information Technology, Mumbai University, CGPA 8.9\nSkills\nHTML, CSS, JavaScript, React, Git, Java\nProjects\nPortfolio Website: built with HTML, CSS and JavaScript, hosted on GitHub Pages\nExpense Tracker: React app with a REST API and MongoDB database\nWeather App: fetched data from a public API and showed it in a responsive layout\nInternships\nWeb development intern at a local startup, built landing pages with Tailwind CSS'},
+{r:2,t:'Rohan Kulkarni\nrohan.k@example.com | +91 99887 76655\nEducation\nB.Tech CSE (AI and ML), MIT Academy of Engineering, CGPA 8.2\nSkills\nPython, C++, Machine Learning, TensorFlow, SQL, Linux\nProjects\nCrop Disease Detector: trained a CNN in TensorFlow and PyTorch on leaf images, 91% accuracy\nSpam Classifier: used scikit-learn, pandas and NLP techniques on email data\nDSA Practice: solved 250 LeetCode problems in C++\nCertifications\nDeep Learning Specialization, Coursera'}
+];
+function randRes(){var s=SAMPLES[Math.floor(Math.random()*SAMPLES.length)];$('rt').value=s.t;$('rl').value=s.r;$('oe').textContent='Sample resume loaded. Click Analyze, or edit it first.'}
+function demo(){var s=SAMPLES[Math.floor(Math.random()*SAMPLES.length)];S={user:'Demo',text:s.t,role:s.r,hrs:6,apps:[],demo:true};P=analyze(s.t);openApp()}
+function exitDemo(){S={user:'',text:'',role:0,hrs:6,apps:[]};P=null;try{var d=JSON.parse(localStorage.getItem('sm')||'null');if(d)S=d}catch(e){}show('land')}
+function esc(t){return String(t).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function save(){if(S.demo)return;try{localStorage.setItem('sm',JSON.stringify(S))}catch(e){}}
+function show(id){['land','login','onb','app'].forEach(function(x){$(x).classList.toggle('on',x===id)});window.scrollTo(0,0)}
+function go(v){show(v)}
+function tab(t){['dash','profile','interview','apps','voice'].forEach(function(x){var el=$('v-'+x);if(el)el.style.display=x===t?'block':'none'});document.querySelectorAll('aside a').forEach(function(a){a.classList.toggle('on',a.dataset.t===t)});if(t==='interview')initInterviewTab();window.scrollTo(0,0)}
+document.querySelectorAll('aside a').forEach(function(a){a.onclick=function(){tab(a.dataset.t)}});
+function tog(){signup=!signup;$('nm').style.display=signup?'block':'none';$('lt').textContent=signup?'Create your account':'Welcome back';$('sb').textContent=signup?'Sign up':'Log in';$('tg').textContent=signup?'Already have an account? Log in':'New here? Create an account';$('err').textContent=''}
+function auth(){var e=$('e').value.trim(),p=$('p').value,n=$('n').value.trim();
+if(!/^\S+@\S+\.\S+$/.test(e)){$('err').textContent='Enter a valid email address.';return}
+if(p.length<6){$('err').textContent='Password needs at least 6 characters.';return}
+var nm=n||e.split('@')[0];S.user=nm.charAt(0).toUpperCase()+nm.slice(1);save();enter()}
+function enter(){if(S.text&&S.text.length>80){P=analyze(S.text);openApp()}else{fillOnb();show('onb')}}
+function fillOnb(){$('rl').innerHTML=R.map(function(r,i){return'<option value="'+i+'">'+r.n+'</option>'}).join('');$('rl').value=S.role;$('hr').value=S.hrs;$('rt').value=S.text||''}
+function analyzeNow(){var t=$('rt').value.trim();if(t.length<80){$('oe').textContent='Upload or paste a resume with at least a few lines of text.';return}
+$('oe').textContent='';S.text=t;S.role=+$('rl').value;S.hrs=Math.max(1,+$('hr').value||6);save();P=analyze(t);openApp()}
+$('fl').onchange=function(){var f=this.files[0];if(!f)return;$('oe').textContent='Reading file…';var n=f.name.toLowerCase();
+function done(t){$('rt').value=t;$('oe').textContent=t.trim().length<80?'Could not read much text from this file. Paste your resume text instead.':''}
+function fail(){$('oe').textContent='Could not read this file. Paste your resume text instead.'}
+if(/\.txt$/.test(n)){f.text().then(done).catch(fail)}
+else if(/\.docx$/.test(n)&&window.mammoth){f.arrayBuffer().then(function(b){return mammoth.extractRawText({arrayBuffer:b})}).then(function(r){done(r.value)}).catch(fail)}
+else if(/\.pdf$/.test(n)&&window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+f.arrayBuffer().then(function(b){return pdfjsLib.getDocument({data:b}).promise}).then(function(d){var ps=[];for(var i=1;i<=d.numPages;i++)ps.push(d.getPage(i).then(function(pg){return pg.getTextContent()}).then(function(c){var y=null,s='';c.items.forEach(function(it){var yy=Math.round(it.transform[5]);if(y!==null&&Math.abs(yy-y)>3)s+='\n';else if(s&&!/\s$/.test(s))s+=' ';s+=it.str;y=yy});return s}));return Promise.all(ps)}).then(function(a){done(a.join('\n'))}).catch(fail)}
+else fail()};
+function analyze(t){var L=t.split(/\r?\n/).map(function(x){return x.trim()}).filter(Boolean),sec='',sk={},pr=[],ed=[];
+var email=(t.match(/[\w.+-]+@[\w-]+\.[\w.]+/)||[''])[0],ph=(t.match(/(?:\+91[\s-]?)?[6-9]\d{4}[\s-]?\d{5}/)||[''])[0],cg=(t.match(/(?:cgpa|gpa)\s*[:\-]?\s*(\d\.\d+)/i)||[])[1]||'';
+var name=(L[0]&&L[0].length<40&&L[0].indexOf('@')<0)?L[0]:'';
+L.forEach(function(l){var h=l.match(/^(academic projects|projects?|work experience|experience|internships?|technical skills|skills|education|certifications?|achievements)\b/i);
+if(h&&l.length<40){sec=h[1].toLowerCase();return}
+var w=/project|experience|intern|work/.test(sec)?1:/cert/.test(sec)?.6:.4;
+if(/project/.test(sec)&&l.length>12&&pr.length<6)pr.push(l.slice(0,100));
+if(/b\.?\s?tech|\bb\.?e\.?\b|bachelor|m\.?\s?tech|\bbca\b|b\.?sc|diploma|university|college|institute/i.test(l)&&ed.length<2)ed.push(l.slice(0,110));
+for(var k in SK){if(new RegExp(SK[k],'i').test(l)&&(!sk[k]||sk[k].fit<w))sk[k]={fit:w,line:l.slice(0,110)}}});
+return{name:name,email:email,phone:ph,cgpa:cg,edu:ed,pr:pr,sk:sk}}
+function rs(r){var tot=0,got=0,cov=0,n=0,rows=[];for(var k in r.s){var w=r.s[k],f=P.sk[k]?P.sk[k].fit:0;tot+=w;got+=w*f;n++;if(f)cov++;rows.push({k:k,w:w,f:f})}
+rows.sort(function(a,b){return b.w*(1-b.f)-a.w*(1-a.f)});return{rd:Math.round(got/tot*100),cv:Math.round(cov/n*100),rows:rows}}
+function tier(f){return f===0?['Not found in your resume','no']:f<.5?['Listed only, no proof','mid']:f<1?['Certificate','mid']:['Shown in project or work','ok']}
+function openApp(){var nm=P.name||S.user;$('wb').textContent='Welcome back, '+S.user+'! 👋';$('av').textContent=S.user.charAt(0).toUpperCase();$('demob').style.display=S.demo?'flex':'none';
+$('as').innerHTML=STG.map(function(s){return'<option>'+s+'</option>'}).join('');render();show('app');tab('dash')}
+function render(){var r=R[S.role],a=rs(r),n=Object.keys(P.sk).length;
+var ivScore=(S.latest_interview&&S.latest_interview.result&&typeof S.latest_interview.result.overall==='number')?S.latest_interview.result.overall+' / 5.0':'—';
+var ivNote=(S.latest_interview&&S.latest_interview.result)?(S.latest_interview.result.results&&S.latest_interview.result.results[0]&&S.latest_interview.result.results[0].method==='llm'?'Claude AI':'keyword heuristic'):'not taken yet';
+var ivPct=(S.latest_interview&&S.latest_interview.result&&typeof S.latest_interview.result.overall==='number')?Math.round(S.latest_interview.result.overall/5*100):0;
+var st=[['Role readiness',a.rd+'%','for '+r.n,a.rd],['Evidence coverage',a.cv+'%','skills found',a.cv],['Skills detected',n,'of '+Object.keys(SK).length,Math.round(n/Object.keys(SK).length*100)],['Interview score',ivScore,ivNote,ivPct]];
+$('stats').innerHTML=st.map(function(s){return'<div class="card" '+(s[0]==='Interview score'?'style="cursor:pointer" onclick="tab(\'interview\')" title="Click to open Mock Interview"':'')+'><h3>'+s[0]+'</h3><div class="big">'+s[1]+' <small>'+s[2]+'</small></div><div class="pb" style="margin-top:14px"><i style="width:'+s[3]+'%"></i></div></div>'}).join('');
+$('gt').textContent='Skill gaps for '+r.n;
+$('gl2').innerHTML=a.rows.slice(0,6).map(function(x){var t=tier(x.f);return'<div class="gap"><div><span>'+x.k+' <span class="tag '+t[1]+'">'+t[0]+'</span></span><span>'+Math.round(x.f*100)+'%</span></div><div class="pb"><i style="width:'+x.f*100+'%"></i></div></div>'}).join('');
+$('goals').innerHTML='<div class="goal"><div><small>You are here</small>'+esc(P.edu[0]||'Add education to your resume')+'</div></div><div class="goal"><div><small>Next target</small>'+r.n+'</div><strong>'+r.sal+' /yr</strong></div><div class="goal"><div><small>Future potential</small>'+r.up.split(' · ')[0]+'</div><strong>'+r.up.split(' · ')[1]+' /yr</strong></div>';
+var pk=R.map(function(x){return{r:x,a:rs(x)}}).sort(function(p,q){return q.a.rd-p.a.rd});
+$('picks').innerHTML=pk.map(function(p){return'<div class="job"><div class="lg">'+p.r.n.charAt(0)+'</div><div><b>'+p.r.n+'</b> · '+p.a.rd+'% match<br>'+Object.keys(p.r.s).slice(0,5).map(function(k){return'<span class="tag '+(P.sk[k]?'ok':'no')+'">'+k+'</span>'}).join('')+'<br><b style="color:var(--ok)">'+p.r.sal+' /yr</b></div></div>'}).join('');
+profile();apps()}
+function plan(){var a=rs(R[S.role]),l=$('pl'),g=a.rows.filter(function(x){return x.f<1}).slice(0,4);l.classList.toggle('on');
+l.innerHTML=g.length?g.map(function(x,i){return'<li><b>Week '+(i+1)+':</b> '+x.k+' · '+S.hrs+' hrs. '+(x.f?'It is on your resume but not proven. ':'It is missing from your resume. ')+'Learn it, then build one small project and add it under Projects.</li>'}).join(''):'<li>Every required skill is already shown in your projects or work. Start applying.</li>'}
+function profile(){var sk=Object.keys(P.sk).sort(function(a,b){return P.sk[b].fit-P.sk[a].fit});
+$('pcard').innerHTML='<div class="pf"><div class="av">'+esc((P.name||S.user).charAt(0).toUpperCase())+'</div><div><h2>'+esc(P.name||S.user)+'</h2><p>'+esc([P.email,P.phone].filter(Boolean).join(' · ')||'No contact details found in resume')+'</p></div></div>'+
+'<div class="sec">Education'+(P.cgpa?' · CGPA '+esc(P.cgpa):'')+'</div>'+(P.edu.length?P.edu.map(function(e){return'<div class="li">'+esc(e)+'</div>'}).join(''):'<div class="empty">No education line found.</div>')+
+'<div class="sec">Projects found</div>'+(P.pr.length?P.pr.map(function(e){return'<div class="li">'+esc(e)+'</div>'}).join(''):'<div class="empty">No projects section found. Adding one will raise your evidence score.</div>')+
+'<div class="sec">Skills found and the evidence behind them</div>'+(sk.length?sk.map(function(k){var t=tier(P.sk[k].fit);return'<div class="li"><b>'+k+'</b> <span class="tag '+t[1]+'">'+t[0]+'</span><br><span style="color:var(--mut)">“'+esc(P.sk[k].line)+'”</span></div>'}).join(''):'<div class="empty">No known skills detected. Check that your resume text was read correctly.</div>')+
+'<div class="sec">Settings</div><div class="ar" style="grid-template-columns:1fr 1fr"><div><label for="pr">Target role</label><select class="f" id="pr">'+R.map(function(r,i){return'<option value="'+i+'"'+(i===S.role?' selected':'')+'>'+r.n+'</option>'}).join('')+'</select></div><div><label for="ph">Hours per week</label><input class="f" id="ph" type="number" min="1" max="60" value="'+S.hrs+'"></div></div>'+
+'<div class="row" style="margin-top:16px"><button class="sm" onclick="upd()">Save settings</button><button class="sm" onclick="exportData()">Export data (JSON)</button><button class="sm" onclick="fillOnb();show(\'onb\')">Replace resume</button><button class="sm" onclick="logout()">Log out</button><button class="sm" style="color:var(--bad)" onclick="wipe()">Delete my data</button></div>'}
+function upd(){S.role=+$('pr').value;S.hrs=Math.max(1,+$('ph').value||6);save();render();tab('dash')}
+function wipe(){try{localStorage.removeItem('sm')}catch(e){}S={user:'',text:'',role:0,hrs:6,apps:[]};P=null;show('land')}
+function apps(){var c={};STG.forEach(function(s){c[s]=0});S.apps.forEach(function(x){c[x.st]++});var m=Math.max.apply(null,STG.map(function(s){return c[s]}).concat([1])),t=S.apps.length;
+$('ch').innerHTML='<div class="chart">'+STG.map(function(s){return'<div>'+c[s]+'<span style="height:'+c[s]/m*130+'px"></span>'+s.split(' ')[0]+'</div>'}).join('')+'</div>';
+var rp=S.apps.filter(function(x){return x.st!=='Applied'}).length;
+$('rr').textContent=t?(rp+' of '+t+' applications got a reply. '+(t<10?'That is too few to spot patterns. Keep logging.':'')):'No applications yet. Add one to start your funnel.';
+$('al').innerHTML=t?S.apps.map(function(x,i){return'<div class="li"><b>'+esc(x.co)+'</b> · '+esc(x.ro)+'<br><select class="f" style="margin-top:6px" onchange="S.apps['+i+'].st=this.value;save();apps()">'+STG.map(function(s){return'<option'+(s===x.st?' selected':'')+'>'+s+'</option>'}).join('')+'</select></div>'}).join(''):'<div class="empty">Nothing here yet.</div>'}
+function addApp(){var c=$('ac').value.trim(),r=$('ar').value.trim();if(!c)return;S.apps.push({co:c,ro:r||'Role not set',st:$('as').value});save();$('ac').value='';$('ar').value='';apps()}
+function intent(t){t=t.toLowerCase();if(/appl/.test(t))return'Add application';if(/target|want to be/.test(t))return'Set target role';if(/hour/.test(t))return'Update weekly hours';return'Ask a question'}
+function addLog(t){if(!t)return;var i=intent(t),d=document.createElement('div');d.innerHTML='<span><b>'+i+'</b><br>“'+esc(t)+'”</span><button>Confirm</button>';
+d.querySelector('button').onclick=function(){
+if(i==='Add application'){var m=t.match(/appl(?:ied|y)?\s*(?:to|at)?\s+(.+?)(?:\s+(?:as|for)\s+(?:an?\s+)?(.+))?$/i);S.apps.push({co:m?m[1]:'Unknown',ro:m&&m[2]?m[2]:'Role not set',st:'Applied'})}
+else if(i==='Update weekly hours'){var h=t.match(/\d+/);if(h)S.hrs=+h[0]}
+else if(i==='Set target role'){R.forEach(function(r,k){if(t.toLowerCase().indexOf(r.n.toLowerCase().split(' ')[0])>-1)S.role=k})}
+save();render();d.querySelector('button').outerHTML='<span style="color:var(--ok);font-weight:700">Saved ✓</span>'};
+$('lg').prepend(d);$('vt').value=''}
+$('vt').addEventListener('keydown',function(e){if(e.key==='Enter')addLog(this.value.trim())});
+var SR=window.SpeechRecognition||window.webkitSpeechRecognition,rec=null;
+$('mic').onclick=function(){if(!SR){$('vt').placeholder='Voice is not supported here. Type and press Enter.';return}
+if(rec){rec.stop();return}rec=new SR();rec.lang='en-IN';var m=$('mic');m.classList.add('rec');
+rec.onresult=function(e){addLog(e.results[0][0].transcript)};rec.onend=function(){m.classList.remove('rec');rec=null};rec.onerror=function(){m.classList.remove('rec');rec=null};rec.start()};
+(function(){if(!window.THREE)return;var c=$('gl'),r=new THREE.WebGLRenderer({canvas:c,alpha:true,antialias:true}),s=new THREE.Scene(),cam=new THREE.PerspectiveCamera(55,1,.1,100);cam.position.z=9;
+var g=new THREE.Group();s.add(g);
+var k=new THREE.Mesh(new THREE.TorusKnotGeometry(2,.55,160,24),new THREE.MeshBasicMaterial({color:0xff9f45,wireframe:true,transparent:true,opacity:.7}));g.add(k);
+var o=new THREE.Mesh(new THREE.IcosahedronGeometry(1.2,1),new THREE.MeshBasicMaterial({color:0x4f7cff,wireframe:true}));g.add(o);
+var n=800,p=new Float32Array(n*3);for(var i=0;i<n*3;i++)p[i]=(Math.random()-.5)*26;
+var pg=new THREE.BufferGeometry();pg.setAttribute('position',new THREE.BufferAttribute(p,3));
+var pts=new THREE.Points(pg,new THREE.PointsMaterial({color:0x4f7cff,size:.06}));s.add(pts);
+var mx=0,my=0;window.addEventListener('mousemove',function(e){mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5});
+function rz(){var w=innerWidth,h=innerHeight;r.setSize(w,h,false);r.setPixelRatio(Math.min(devicePixelRatio,2));cam.aspect=w/h;cam.updateProjectionMatrix();g.position.x=w>760?3.4:0;g.position.y=w>760?0:2.6}
+rz();window.addEventListener('resize',rz);var t=0;
+(function a(){requestAnimationFrame(a);if(!$('land').classList.contains('on'))return;t+=.01;k.rotation.x=t*.6+my;k.rotation.y=t+mx;o.rotation.y=-t*1.4;o.rotation.x=t;pts.rotation.y=t*.05;r.render(s,cam)})()})();
+
+</script>
+
+<script>
+/* ---- API layer: replaces the offline logic with calls to the backend ---- */
+var TOKEN=null,orig={demo:demo},saveT=null;
+try{TOKEN=localStorage.getItem('sm_tok')}catch(e){}
+function api(m,p,b,form){var h={};if(TOKEN)h.Authorization='Bearer '+TOKEN;if(b&&!form)h['Content-Type']='application/json';
+return fetch(p,{method:m,headers:h,body:form?b:(b?JSON.stringify(b):undefined)}).then(function(r){return r.json().catch(function(){return{}}).then(function(j){if(!r.ok)throw new Error(typeof j.detail==='string'?j.detail:'Request failed');return j})})}
+function setRoles(rs){R=rs;var o=R.map(function(r,i){return'<option value="'+i+'">'+r.n+'</option>'}).join('');$('jf').innerHTML=o}
+function applyServer(j){if(j.roles)setRoles(j.roles);P=j.profile;S.user=j.user||S.user;S.role=j.role;S.hrs=j.hrs;S.text=j.text||S.text;
+if(j.latest_interview)S.latest_interview=j.latest_interview;
+S.apps=(j.apps||[]).map(function(a){return{co:a.company,ro:a.role,st:a.stage}})}
+function boot(){if(!TOKEN){show('land');return}
+api('GET','/api/profile').then(function(j){S.user=j.user;setRoles(j.roles);if(j.profile){applyServer(j);openApp()}else{S.role=j.role;S.hrs=j.hrs;fillOnb();show('onb')}}).catch(function(){TOKEN=null;try{localStorage.removeItem('sm_tok')}catch(e){}show('land')})}
+auth=function(){var e=$('e').value.trim(),p=$('p').value,n=$('n').value.trim();
+if(!/^\S+@\S+\.\S+$/.test(e)){$('err').textContent='Enter a valid email address.';return}
+if(p.length<6){$('err').textContent='Password needs at least 6 characters.';return}
+api('POST',signup?'/api/auth/register':'/api/auth/login',{email:e,password:p,name:n}).then(function(j){TOKEN=j.token;try{localStorage.setItem('sm_tok',TOKEN)}catch(x){}S.user=j.name;boot()}).catch(function(x){$('err').textContent=x.message})};
+analyzeNow=function(){var t=$('rt').value.trim();if(t.length<80){$('oe').textContent='Upload or paste a resume with at least a few lines of text.';return}
+$('oe').textContent='Analyzing…';api('POST','/api/profile/resume',{text:t,role:+$('rl').value,hours:Math.max(1,+$('hr').value||6)}).then(function(j){$('oe').textContent='';applyServer(j);openApp()}).catch(function(x){$('oe').textContent=x.message})};
+$('fl').onchange=function(){var f=this.files[0];if(!f)return;$('oe').textContent='Reading file…';var fd=new FormData();fd.append('file',f);
+api('POST','/api/profile/parse-file',fd,true).then(function(j){$('rt').value=j.text;$('oe').textContent=j.text.trim().length<80?'Could not read much text from this file. Paste your resume text instead.':''}).catch(function(x){$('oe').textContent=x.message})};
+save=function(){if(S.demo||!TOKEN)return;clearTimeout(saveT);saveT=setTimeout(function(){api('PUT','/api/state',{role:S.role,hours:S.hrs,apps:S.apps.map(function(a){return{company:a.co,role:a.ro,stage:a.st}})}).catch(function(){})},300)};
+logout=function(){TOKEN=null;try{localStorage.removeItem('sm_tok')}catch(e){}S={user:'',text:'',role:0,hrs:6,apps:[]};P=null;show('land')};
+wipe=function(){if(!confirm('Delete your account and all your data?'))return;api('DELETE','/api/account').finally(function(){logout()})};
+demo=function(){var s=SAMPLES[Math.floor(Math.random()*SAMPLES.length)];api('POST','/api/analyze',{text:s.t,role:s.r}).then(function(j){S={user:'Demo',text:s.t,role:s.r,hrs:6,apps:[],demo:true};setRoles(j.roles);P=j.profile;openApp()}).catch(function(){orig.demo()})};
+exitDemo=function(){S={user:'',text:'',role:0,hrs:6,apps:[]};P=null;if(TOKEN)boot();else show('land')};
+addLog=function(t){if(!t)return;var run=TOKEN&&!S.demo?api('POST','/api/voice/interpret',{text:t}):Promise.resolve({intent:intent(t),label:intent(t),entities:{}});
+run.then(function(v){var d=document.createElement('div');d.innerHTML='<span><b>'+esc(v.label)+'</b><br>“'+esc(t)+'”</span><button>Confirm</button>';
+d.querySelector('button').onclick=function(){var en=v.entities||{};
+if(v.intent==='add_application'||v.label==='Add application'){S.apps.push({co:en.company||'Unknown',ro:en.role||'Role not set',st:'Applied'})}
+else if(v.intent==='update_hours'&&en.hours)S.hrs=en.hours;
+else if(v.intent==='set_target_role'&&typeof en.role==='number')S.role=en.role;
+save();render();d.querySelector('button').outerHTML='<span style="color:var(--ok);font-weight:700">Saved ✓</span>'};
+$('lg').prepend(d);$('vt').value=''}).catch(function(x){$('lg').prepend(Object.assign(document.createElement('div'),{textContent:x.message}))})};
+function ingestJD(){var t=$('jt').value.trim();$('jr').textContent='Reading…';
+api('POST','/api/jobs/ingest',{family:R[+$('jf').value].n,text:t}).then(function(j){var ks=Object.keys(j.skills);
+$('jr').textContent='Found '+(ks.length?ks.join(', '):'no known skills')+'. You have added '+j.jd_count+' for this role'+(j.blended?', so its skill weights now blend in real demand.':'. Add '+(3-j.jd_count)+' more to blend them in.');$('jt').value='';
+return api('GET','/api/roles')}).then(function(rs){setRoles(rs);render()}).catch(function(x){$('jr').textContent=x.message})}
+api('GET','/api/roles').then(setRoles).catch(function(){});
+
+var currentInterviewSession=null;
+
+function initInterviewTab(){
+  var r=R[S.role];
+  if(r && $('iv-role-name')) $('iv-role-name').textContent=r.n;
+  api('GET','/api/health').then(function(h){
+    var b=$('iv-badge');
+    if(!b) return;
+    if(h.llm){
+      var m=(h.llm_info && h.llm_info.model)?h.llm_info.model:'Claude 3.5 Sonnet';
+      b.innerHTML='<span class="tag ok">AI Evaluator: Active ('+esc(m)+')</span>';
+    }else if(h.llm_info && h.llm_info.status==='low_credit'){
+      b.innerHTML='<span class="tag mid" title="Anthropic API key is set; heuristic fallback active until credits are topped up">AI Evaluator: Low Credits (Heuristic fallback)</span>';
+    }else{
+      b.innerHTML='<span class="tag mid">AI Evaluator: Keyword Heuristic</span>';
+    }
+  }).catch(function(){});
+
+  if(S.latest_interview && S.latest_interview.result){
+    renderInterviewResult(S.latest_interview.result);
+  }
+}
+
+function startInterview(){
+  $('iv-btn-start').disabled=true;
+  $('iv-btn-start').textContent='Loading questions…';
+  api('POST','/api/interviews/sessions',{role:S.role}).then(function(session){
+    currentInterviewSession=session;
+    $('iv-btn-start').disabled=false;
+    $('iv-btn-start').textContent='Restart Interview';
+    $('iv-session-card').style.display='block';
+    $('iv-result-card').style.display='none';
+    $('iv-err').textContent='';
+    var qHtml=session.questions.map(function(q, i){
+      return '<div class="li" style="padding:14px;margin-bottom:12px;background:var(--bg)">' +
+        '<div style="font-weight:700;margin-bottom:8px">Q' + (i+1) + ': ' + esc(q.q) + '</div>' +
+        '<textarea class="f" id="iv-ans-' + q.id + '" placeholder="Type or paste your technical answer here (at least 1-2 sentences)..." style="min-height:90px"></textarea>' +
+        '</div>';
+    }).join('');
+    $('iv-questions').innerHTML=qHtml;
+    $('iv-session-card').scrollIntoView({behavior:'smooth'});
+  }).catch(function(err){
+    $('iv-btn-start').disabled=false;
+    $('iv-btn-start').textContent='Start Mock Interview';
+    alert('Failed to start interview: '+err.message);
+  });
+}
+
+function submitInterview(){
+  if(!currentInterviewSession) return;
+  var answers=[];
+  var hasShort=false;
+  currentInterviewSession.questions.forEach(function(q){
+    var el=$('iv-ans-'+q.id);
+    var val=el?el.value.trim():'';
+    if(val.length < 10) hasShort=true;
+    answers.push({q:q.id, text:val});
+  });
+  if(hasShort){
+    $('iv-err').textContent='Please provide an answer of at least a sentence (10+ characters) for each question.';
+    return;
+  }
+  $('iv-err').textContent='';
+  $('iv-btn-submit').disabled=true;
+  $('iv-btn-submit').textContent='Evaluating with AI…';
+  api('POST','/api/interviews/'+currentInterviewSession.id+'/evaluate',{answers:answers}).then(function(res){
+    $('iv-btn-submit').disabled=false;
+    $('iv-btn-submit').textContent='Submit Answers for Evaluation';
+    $('iv-session-card').style.display='none';
+    S.latest_interview={id:currentInterviewSession.id, role:S.role, result:res};
+    render();
+    renderInterviewResult(res);
+  }).catch(function(err){
+    $('iv-btn-submit').disabled=false;
+    $('iv-btn-submit').textContent='Submit Answers for Evaluation';
+    $('iv-err').textContent=err.message || 'Evaluation request failed.';
+  });
+}
+
+function renderInterviewResult(res){
+  if(!res) return;
+  $('iv-result-card').style.display='block';
+  var isLLM=res.results && res.results[0] && res.results[0].method==='llm';
+  $('iv-method-tag').className='tag '+(isLLM?'ok':'mid');
+  $('iv-method-tag').textContent=isLLM?'Evaluated by Claude AI Rubric':'Evaluated by Keyword Heuristic';
+  $('iv-overall-score').innerHTML=(res.overall || 0)+' <small>/ 5.0 Overall</small>';
+  $('iv-score-bar').style.width=Math.min(100, Math.round((res.overall || 0) / 5 * 100))+'%';
+
+  var dimTotals={}, dimCounts={};
+  (res.results || []).forEach(function(item){
+    if(item.scores){
+      for(var d in item.scores){
+        dimTotals[d]=(dimTotals[d] || 0)+item.scores[d];
+        dimCounts[d]=(dimCounts[d] || 0)+1;
+      }
+    }
+  });
+  var dimHtml=Object.keys(dimTotals).map(function(d){
+    var avg=(dimTotals[d] / (dimCounts[d] || 1)).toFixed(1);
+    var pct=Math.round((avg / 5) * 100);
+    return '<div style="background:var(--bg);padding:10px 14px;border-radius:12px">' +
+      '<small style="color:var(--mut);display:block;font-size:12px">' + esc(d) + '</small>' +
+      '<strong style="font-size:18px">' + avg + ' <small>/ 5</small></strong>' +
+      '<div class="pb" style="margin-top:6px"><i style="width:' + pct + '%"></i></div>' +
+      '</div>';
+  }).join('');
+  $('iv-dimensions').innerHTML=dimHtml;
+
+  var detHtml=(res.results || []).map(function(item, idx){
+    var scoresList=item.scores ? Object.keys(item.scores).map(function(k){
+      return '<span class="tag ok">' + esc(k) + ': ' + item.scores[k] + '/5</span>';
+    }).join(' ') : '';
+    return '<div class="li" style="padding:14px;margin-bottom:12px;background:var(--bg);line-height:1.5">' +
+      '<div><b>Question ' + (idx + 1) + ' Breakdown</b></div>' +
+      '<div style="margin:6px 0">' + scoresList + '</div>' +
+      (item.evidence ? '<div style="margin-top:6px;font-size:13px"><b style="color:var(--ok)">Evidence Cited:</b> <i>“' + esc(item.evidence) + '”</i></div>' : '') +
+      (item.missing && item.missing.length ? '<div style="margin-top:6px;font-size:13px"><b style="color:var(--bad)">Missing Concepts:</b> ' + esc(item.missing.join(', ')) + '</div>' : '') +
+      (item.practice ? '<div style="margin-top:8px;padding:8px 12px;border-radius:8px;background:#fff;border:1px solid var(--line);font-size:13px"><b style="color:var(--acc)">Recommended Practice:</b> ' + esc(item.practice) + '</div>' : '') +
+      '</div>';
+  }).join('');
+  $('iv-details').innerHTML=detHtml;
+  $('iv-result-card').scrollIntoView({behavior:'smooth'});
+}
+
+function exportData(){
+  api('GET','/api/export').then(function(d){
+    var blob=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
+    var u=URL.createObjectURL(blob);
+    var a=document.createElement('a');
+    a.href=u;
+    a.download='skillme_data_export.json';
+    a.click();
+    URL.revokeObjectURL(u);
+  }).catch(function(e){alert('Export failed: '+e.message)});
+}
+if(TOKEN)boot();
+</script>
+</body>
+</html>
